@@ -3,21 +3,31 @@ package com.example.finalproject2048java;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class MainActivity extends AppCompatActivity {
     private float x1,x2,y1,y2;
-    static final int MIN_DISTANCE = 250;
+    static final int MIN_DISTANCE = 350;
+    private int[][] grid = new int[4][4];
+    public int score =0;
+    public int moves=0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        int[][] grid = new int[4][4];
-
+        initialize();
+        randomSpawn();
     }
 
+
+    /*
+     * Detect Swipes
+     */
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -33,20 +43,265 @@ public class MainActivity extends AppCompatActivity {
                 float deltaY = y2 - y1;
                 float deltaX = x2 - x1;
                 if (Math.abs(deltaX) > MIN_DISTANCE && deltaX > 0){
-                    Toast.makeText(this, "left2right swipe", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(this, "left2right swipe", Toast.LENGTH_SHORT).show();
+                    onSwipeRight();
+                    update();
+                    randomSpawn();
+
                 }
                 else if(Math.abs(deltaX) > MIN_DISTANCE && deltaX < 0){
-                    Toast.makeText(this, "right2left swipe", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "right2left swipe", Toast.LENGTH_SHORT).show();
+                    onSwipeLeft();
+                    update();
+                    randomSpawn();
                 }
 
                 if (Math.abs(deltaY) > MIN_DISTANCE && deltaY > 0){
-                    Toast.makeText(this, "up2down swipe", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(this, "up2down swipe", Toast.LENGTH_SHORT).show();
+                    onSwipeDown();
+                    update();
+                    randomSpawn();
                 }
                 else if(Math.abs(deltaY) > MIN_DISTANCE && deltaY < 0){
-                    Toast.makeText(this, "down2up swipe", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "down2up swipe", Toast.LENGTH_SHORT).show();
+                    onSwipeUp();
+                    update();
+                    randomSpawn();
                 }
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    /*
+     --- Game Action Functions ---
+     */
+
+    public void onSwipeUp(){
+        for(int i =0; i<grid[grid.length-1].length;i++){
+            for(int k =grid.length-1; k>0;k--) {
+                if (grid[k][i] == grid[k - 1][i]) {
+                    grid[k-1][i] = grid[k][i] + grid[k - 1][i];
+                    grid[k][i] = 0;
+                } else if(grid[k-1][i] == 0) {
+                    grid[k-1][i] = grid[k][i];
+                    grid[k][i] = 0;
+                }
+            }
+        }
+        moves++;
+    }
+
+    public void onSwipeDown(){
+        for(int i =0; i<grid[grid.length-1].length;i++){
+            for(int k =0; k<grid.length-1;k++) {
+                if (grid[k][i] == grid[k + 1][i]) {
+                    grid[k+1][i] = grid[k][i] + grid[k + 1][i];
+                    grid[k][i] = 0;
+                } else if(grid[k+1][i] == 0) {
+                    grid[k+1][i] = grid[k][i];
+                    grid[k][i] = 0;
+                }
+            }
+        }
+        moves++;
+    }
+
+
+    public void onSwipeLeft(){
+        for(int k =0; k<grid[grid.length-1].length;k++){
+            for(int i =grid.length-1; i>0;i--) {
+                if (grid[k][i] == grid[k][i-1]) {
+                    grid[k][i-1] = grid[k][i] + grid[k][i-1];
+                    grid[k][i] = 0;
+                } else if(grid[k][i-1] == 0) {
+                    grid[k][i-1] = grid[k][i];
+                    grid[k][i] = 0;
+                }
+            }
+        }
+        moves++;
+    }
+
+    public void onSwipeRight(){
+        for(int k =0; k<grid[grid.length-1].length;k++){
+            for(int i =0; i<grid.length-1;i++) {
+                if (grid[k][i] == grid[k][i+1]) {
+                    grid[k][i+1] = grid[k][i] + grid[k][i+1];
+                    grid[k][i] = 0;
+                } else if(grid[k][i+1] == 0) {
+                    grid[k][i+1] = grid[k][i];
+                    grid[k][i] = 0;
+                }
+            }
+        }
+        moves++;
+    }
+
+
+    /*
+    --- Helper Methods ---
+     */
+
+
+    public void update(){
+        for(int i =0;i<grid.length;i++){
+            for(int k = 0; k<grid[i].length;k++){
+                String temp = "i" + i + k;
+                ImageView img;
+                switch (grid[i][k]) {
+                    case 0:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.zero);
+                        break;
+                    case 2:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.two);
+                        break;
+                    case 4:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.four);
+                        break;
+                    case 8:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.eight);
+                        break;
+                    case 16:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.sixteen);
+                        break;
+                    case 32:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.thirtytwo);
+                        break;
+                    case 64:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.sixtyfour);
+                        break;
+                    case 128:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.onetwentyeight);
+                        break;
+                    case 256:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.twofivesix);
+                        break;
+                    case 512:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.fiveonetwo);
+                        break;
+                    case 1024:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.onezerotwofour);
+                        break;
+                    case 2048:
+                        img = (ImageView) findViewById(findID(temp));
+                        img.setImageResource(R.drawable.twentyfoureight);
+                        break;
+                    }
+                }
+            }
+        for(int i =0;i<grid.length;i++){
+            for(int k = 0; k<grid[i].length;k++){
+                score += grid[i][k];
+            }
+        }
+
+        TextView tv1 = (TextView)findViewById(R.id.score);
+        String scoreStr = "Score - " + String.valueOf(score);
+        tv1.setText(scoreStr);
+
+        TextView tv2 = (TextView)findViewById(R.id.moves);
+        String movesStr = "Moves - " + String.valueOf(moves);
+        tv2.setText(movesStr);
+    }
+
+    public void initialize(){
+        for(int i=0;i<grid.length;i++){
+            for(int k=0;k<grid[i].length;k++){
+                grid[i][k] = 0;
+            }
+        }
+    }
+
+    public int findID(String input) {
+        String in = input;
+        switch (in) {
+            case "i00":
+                return R.id.i00;
+            case "i01":
+                return R.id.i01;
+            case "i02":
+                return R.id.i02;
+            case "i03":
+                return R.id.i03;
+            case "i10":
+                return R.id.i10;
+            case "i11":
+                return R.id.i11;
+            case "i12":
+                return R.id.i12;
+            case "i13":
+                return R.id.i13;
+            case "i20":
+                return R.id.i20;
+            case "i21":
+                return R.id.i21;
+            case "i22":
+                return R.id.i22;
+            case "i23":
+                return R.id.i23;
+            case "i30":
+                return R.id.i30;
+            case "i31":
+                return R.id.i31;
+            case "i32":
+                return R.id.i32;
+            case "i33":
+                return R.id.i33;
+        }
+        return 0;
+    }
+
+  /*  public boolean isSpaceEmpty();
+    {
+        for(int i = 0; i< grid.length; i++)
+        {
+            for(int j = 0; j<grid[i].length; j++)
+            {
+                if(grid[i][j] == 0)
+                {
+
+                }
+            }
+        }
+    }*/
+
+// TODO: spawn in empty tiles only
+    public void randomSpawn(){
+        int randomX = (int) (Math.random() * 3);
+        int randomY = (int) (Math.random() * 3);
+        try{
+            if (grid[randomY][randomX] > 0){
+                randomSpawn();
+            } else{
+                grid[randomY][randomX] = 2;
+                update();
+            }
+        } catch (Error err){
+            //Toast.makeText(this, "You Lost", Toast.LENGTH_SHORT).show();
+            new AlertDialog.Builder(this).setTitle("Game Over")
+                    .setMessage("Score - " + score)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            initialize();
+                            score = 0;                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
+        }
+
     }
 }
