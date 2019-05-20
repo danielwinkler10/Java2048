@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private int[][] grid = new int[4][4];
     public int score =0;
     public int moves=0;
+    int randomX;
+    int randomY;
 
 
     @Override
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     onSwipeRight();
                     update();
                     randomSpawn();
+                    moves++;
 
                 }
                 else if(Math.abs(deltaX) > MIN_DISTANCE && deltaX < 0){
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     onSwipeLeft();
                     update();
                     randomSpawn();
+                    moves++;
                 }
 
                 if (Math.abs(deltaY) > MIN_DISTANCE && deltaY > 0){
@@ -61,12 +65,14 @@ public class MainActivity extends AppCompatActivity {
                     onSwipeDown();
                     update();
                     randomSpawn();
+                    moves++;
                 }
                 else if(Math.abs(deltaY) > MIN_DISTANCE && deltaY < 0){
                     //Toast.makeText(this, "down2up swipe", Toast.LENGTH_SHORT).show();
                     onSwipeUp();
                     update();
                     randomSpawn();
+                    moves++;
                 }
                 break;
         }
@@ -77,65 +83,90 @@ public class MainActivity extends AppCompatActivity {
      --- Game Action Functions ---
      */
 
-    public void onSwipeUp(){
-        for(int i =0; i<grid[grid.length-1].length;i++){
-            for(int k =grid.length-1; k>0;k--) {
-                if (grid[k][i] == grid[k - 1][i]) {
-                    grid[k-1][i] = grid[k][i] + grid[k - 1][i];
-                    grid[k][i] = 0;
-                } else if(grid[k-1][i] == 0) {
-                    grid[k-1][i] = grid[k][i];
-                    grid[k][i] = 0;
+    public void onSwipeUp() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int i = 0; i < grid[grid.length - 1].length; i++) {
+                for (int k = grid.length - 1; k > 0; k--) {
+                    try{
+                        if (grid[k][i] == grid[k - 1][i]) {
+                            grid[k - 1][i] = grid[k][i] + grid[k - 1][i];
+                            grid[k][i] = 0;
+                            score += grid[k-1][i];
+                        } else if (grid[k - 1][i] == 0) {
+                            grid[k - 1][i] = grid[k][i];
+                            grid[k][i] = 0;
+                        }
+                    } catch (Exception e){
+
+                    }
                 }
             }
         }
-        moves++;
     }
 
-    public void onSwipeDown(){
-        for(int i =0; i<grid[grid.length-1].length;i++){
-            for(int k =0; k<grid.length-1;k++) {
-                if (grid[k][i] == grid[k + 1][i]) {
-                    grid[k+1][i] = grid[k][i] + grid[k + 1][i];
-                    grid[k][i] = 0;
-                } else if(grid[k+1][i] == 0) {
-                    grid[k+1][i] = grid[k][i];
-                    grid[k][i] = 0;
+    public void onSwipeDown() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int i = 0; i < grid[grid.length - 1].length; i++) {
+                for (int k = 0; k < grid.length - 1; k++) {
+                    try{
+                        if (grid[k][i] == grid[k + 1][i]) {
+                            grid[k + 1][i] = grid[k][i] + grid[k + 1][i];
+                            grid[k][i] = 0;
+                            score += grid[k+1][i];
+                        } else if (grid[k + 1][i] == 0) {
+                            grid[k + 1][i] = grid[k][i];
+                            grid[k][i] = 0;
+                        }
+                    } catch (Exception e){
+
+                    }
                 }
             }
         }
-        moves++;
     }
 
 
-    public void onSwipeLeft(){
-        for(int k =0; k<grid[grid.length-1].length;k++){
-            for(int i =grid.length-1; i>0;i--) {
-                if (grid[k][i] == grid[k][i-1]) {
-                    grid[k][i-1] = grid[k][i] + grid[k][i-1];
-                    grid[k][i] = 0;
-                } else if(grid[k][i-1] == 0) {
-                    grid[k][i-1] = grid[k][i];
-                    grid[k][i] = 0;
+    public void onSwipeLeft() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int k = 0; k < grid[grid.length - 1].length; k++) {
+                for (int i = grid.length - 1; i > 0; i--) {
+                    try {
+                        if (grid[k][i] == grid[k][i - 1]) {
+                            grid[k][i - 1] = grid[k][i] + grid[k][i - 1];
+                            grid[k][i] = 0;
+                            score += grid[k][i - 1];
+                        } else if (grid[k][i - 1] == 0) {
+                            grid[k][i - 1] = grid[k][i];
+                            grid[k][i] = 0;
+                        }
+                    } catch (Exception e) {
+
+                    }
                 }
             }
         }
-        moves++;
     }
 
-    public void onSwipeRight(){
-        for(int k =0; k<grid[grid.length-1].length;k++){
-            for(int i =0; i<grid.length-1;i++) {
-                if (grid[k][i] == grid[k][i+1]) {
-                    grid[k][i+1] = grid[k][i] + grid[k][i+1];
-                    grid[k][i] = 0;
-                } else if(grid[k][i+1] == 0) {
-                    grid[k][i+1] = grid[k][i];
-                    grid[k][i] = 0;
+    public void onSwipeRight() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int k = 0; k < grid[grid.length - 1].length; k++) {
+                for (int i = 0; i < grid.length - 1; i++) {
+                    try{
+                        if (grid[k][i] == grid[k][i + 1]) {
+                            grid[k][i + 1] = grid[k][i] + grid[k][i + 1];
+                            grid[k][i] = 0;
+                            score += grid[k][i+1];
+                        } else if (grid[k][i + 1] == 0) {
+                            grid[k][i + 1] = grid[k][i];
+                            grid[k][i] = 0;
+                        }
+                    } catch (Exception e) {
+
+                    }
+
                 }
             }
         }
-        moves++;
     }
 
 
@@ -201,11 +232,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        for(int i =0;i<grid.length;i++){
-            for(int k = 0; k<grid[i].length;k++){
-                score += grid[i][k];
-            }
-        }
+        
 
         TextView tv1 = (TextView)findViewById(R.id.score);
         String scoreStr = "Score - " + String.valueOf(score);
@@ -263,7 +290,8 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-  /*  public boolean isSpaceEmpty();
+
+    public boolean isSpaceEmpty()
     {
         for(int i = 0; i< grid.length; i++)
         {
@@ -271,37 +299,63 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(grid[i][j] == 0)
                 {
-
+                    return true;
                 }
             }
         }
-    }*/
+        return false;
+    }
+
+    public boolean canCombine()
+    {
+        for(int k =0; k<grid[grid.length-1].length;k++){
+            for(int i =0; i<grid.length-1;i++) {
+                if (grid[k][i] == grid[k][i+1]) {
+                    return true;
+                }
+            }
+        }
+        for(int i =0; i<grid[grid.length-1].length;i++) {
+            for (int k = 0; k < grid.length - 1; k++) {
+                if (grid[k][i] == grid[k + 1][i]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void randomCords(){
+        randomX = (int) (Math.random() * 4);
+        randomY = (int) (Math.random() * 4);
+    }
 
 // TODO: spawn in empty tiles only
     public void randomSpawn(){
-        int randomX = (int) (Math.random() * 3);
-        int randomY = (int) (Math.random() * 3);
-        try{
-            if (grid[randomY][randomX] > 0){
+        randomCords();
+        if (grid[randomY][randomX] > 0){
+            if(isSpaceEmpty()){
                 randomSpawn();
             } else{
-                grid[randomY][randomX] = 2;
-                update();
+                if(!canCombine()){
+                    new AlertDialog.Builder(this).setTitle("Game Over")
+                            .setMessage("Score - " + score)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    initialize();
+                                    score = 0;
+                                    moves = 0;
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                    update();
+                }
             }
-        } catch (Error err){
-            //Toast.makeText(this, "You Lost", Toast.LENGTH_SHORT).show();
-            new AlertDialog.Builder(this).setTitle("Game Over")
-                    .setMessage("Score - " + score)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            initialize();
-                            score = 0;                        }
-                    })
-                    .setNegativeButton(android.R.string.no, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-
+        } else {
+            grid[randomY][randomX] = 2;
+            update();
         }
-
     }
 }
